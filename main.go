@@ -15,20 +15,22 @@ var TELEGRAM_KEY string = "mock"
 var TELEGRAM_CHAT string = ""
 var WEB_HOST string = "http://localhost:8000"
 var ASK_EVERY time.Duration = time.Duration(3) * time.Second
-var REVEAL_MESSAGE_SECRET_AFTER time.Duration = time.Duration(9) * time.Second
+var REVEAL_MESSAGE_SECRET_AFTER uint = 4
 
-var SEND_SECRET_AT time.Time
+var send_in uint = 0
 var mutex = &sync.Mutex{}
 
 func resetTimer() {
 	mutex.Lock()
-	SEND_SECRET_AT = time.Now().Add(REVEAL_MESSAGE_SECRET_AFTER)
+	send_in = 0
 	mutex.Unlock()
 }
 
 func sendMessage(msg string) {
 	if TELEGRAM_KEY == "mock" {
+		fmt.Println("========")
 		fmt.Println(msg)
+		fmt.Println("========")
 		return
 	}
 
@@ -56,17 +58,18 @@ func messageThread() {
 	for {
 		time.Sleep(ASK_EVERY)
 		mutex.Lock()
-		if time.Now().After(SEND_SECRET_AT) {
+		send_in = send_in + 1
+		if send_in >= REVEAL_MESSAGE_SECRET_AFTER {
 			sendMessage(SECRET)
 		} else {
-			sendMessage(fmt.Sprintf("Is valhalla still waiting? Click here %s/valhalla_awaits", WEB_HOST))
+			sendMessage(fmt.Sprintf("Is valhalla still waiting?\n Click here\n%s/valhalla_awaits\n to reset timer\nIteration: %v", WEB_HOST, send_in))
 		}
 		mutex.Unlock()
 	}
 }
 
 func main() {
-	sendMessage(fmt.Sprintf("Started Valhalla Bot..\n * Asks every %s\n * If no response within %s I sends secret", ASK_EVERY, REVEAL_MESSAGE_SECRET_AFTER))
+	sendMessage(fmt.Sprintf("Started Valhalla Bot..\n * Asks every %s\n * If no response within %v iterations I sends secret", ASK_EVERY, REVEAL_MESSAGE_SECRET_AFTER))
 	go messageThread()
 
 	http.HandleFunc("/general/ok", func(w http.ResponseWriter, r *http.Request) {
