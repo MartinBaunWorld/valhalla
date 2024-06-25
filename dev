@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+
+export TELEGRAM_KEY="mock"
+export TELEGRAM_CHAT="TODO"
+export WEB_URL='http://localhost:8000'
+export SECRET="Valhalla is here"
+export SEND_SECRET_AFTER=3
+export ASK_EVERY_SECONDS=3
+# export ASK_EVERY_DAYS=3
+
+./valhalla.py
