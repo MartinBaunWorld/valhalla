@@ -7,11 +7,10 @@ This is the simple way to do it.
 
 1. Setup a telegram bot and group - your
 2. Setup environment variables - see example below
-3. Run it
+3. Run it on a server
 
 That's it.
 
-Checkout how I use this app to ensure my [employees inherit some Bitcoin](https://..) 
 
 ## Example Run
 
